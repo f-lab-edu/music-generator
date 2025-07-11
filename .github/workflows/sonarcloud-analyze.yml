@@ -27,37 +27,33 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '19'
+          java-version: '17'
           distribution: 'adopt'
 
-      - name: Create Sonar Gradle File
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        
+      - name: Apply SonarQube
         run: |
-          insert_string="plugins { id 'org.sonarqube' version '4.4.1.3373' }"
-          if [ -f "build.gradle" ]; then
-            echo "$insert_string" > temp.gradle
-            cat build.gradle >> temp.gradle
-            echo "" >> temp.gradle
-            echo "sonarqube {" >> temp.gradle
-            echo "    properties {" >> temp.gradle
-            echo "        property 'sonar.java.binaries', '**'" >> temp.gradle
-            echo "    }" >> temp.gradle
-            echo "}" >> temp.gradle
-            mv temp.gradle build.gradle
-          else
-            echo "$insert_string" > build.gradle
-            echo "" >> build.gradle
-            echo "sonarqube {" >> build.gradle
-            echo "    properties {" >> build.gradle
-            echo "        property 'sonar.java.binaries', '**'" >> build.gradle
-            echo "    }" >> build.gradle
-            echo "}" >> build.gradle
-          fi
-          chmod 777 ./gradlew
+          chmod +x ./gradlew
+          awk '/^plugins {/ {print; print "    id(\"org.sonarqube\") version \"5.1.0.4882\""; next} 1' build.gradle.kts > build.gradle.kts.tmp && mv build.gradle.kts.tmp build.gradle.kts
           
+          cat >> build.gradle.kts << 'EOF'
+
+          sonarqube {
+              properties {
+                  property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
+                  property("sonar.organization", "f-lab-edu-1")
+                  property("sonar.host.url", "https://sonarcloud.io")
+                  property("sonar.sources", "app/src/main")
+                  property("sonar.tests", "app/src/test,app/src/androidTest")
+                  property("sonar.java.binaries", "app/build/tmp/kotlin-classes")
+                  property("sonar.kotlin.binaries", "app/build/tmp/kotlin-classes")
+              }
+          }
+          EOF
 
       - name: Analyze
         run: ./gradlew sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.organization=f-lab-edu-1 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SECRET_SONARQUBE }} -Dsonar.gradle.skipCompile=true
         env:
           SONAR_TOKEN: ${{ secrets.SECRET_SONARQUBE }}
-
-          
