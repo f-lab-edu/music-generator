@@ -33,27 +33,25 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
-      - name: Apply SonarQube
+      - name: Apply SonarQube Plugin
         run: |
           chmod +x ./gradlew
           awk '/^plugins {/ {print; print "    id(\"org.sonarqube\") version \"5.1.0.4882\""; next} 1' build.gradle.kts > build.gradle.kts.tmp && mv build.gradle.kts.tmp build.gradle.kts
-          
-          cat >> build.gradle.kts << 'EOF'
 
-          sonarqube {
-              properties {
-                  property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
-                  property("sonar.organization", "f-lab-edu-1")
-                  property("sonar.host.url", "https://sonarcloud.io")
-                  property("sonar.sources", "app/src/main")
-                  property("sonar.tests", "app/src/test,app/src/androidTest")
-                  property("sonar.java.binaries", "app/build/tmp/kotlin-classes")
-                  property("sonar.kotlin.binaries", "app/build/tmp/kotlin-classes")
-              }
-          }
-          EOF
+      - name: Build Project
+        run: ./gradlew build -x test
 
-      - name: Analyze
-        run: ./gradlew sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.organization=f-lab-edu-1 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SECRET_SONARQUBE }} -Dsonar.gradle.skipCompile=true
+      - name: Analyze with SonarQube
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SECRET_SONARQUBE }}
+        run: |
+          ./gradlew sonar \
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=f-lab-edu-1 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SECRET_SONARQUBE }} \
+            -Dsonar.sources=app/src/main \
+            -Dsonar.tests=app/src/test,app/src/androidTest \
+            -Dsonar.java.binaries=app/build/classes \
+            -Dsonar.kotlin.binaries=app/build/tmp/kotlin-classes
