@@ -1,0 +1,9 @@
+import com.simuel.musicgenerator.configureHiltAndroid
+import com.simuel.musicgenerator.configureKotlinAndroid
+
+plugins {
+    id("com.android.application")
+}
+
+configureKotlinAndroid()
+configureHiltAndroid()
