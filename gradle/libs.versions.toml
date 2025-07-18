@@ -44,9 +44,10 @@ timber = "5.0.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-mockk = "1.14.4"
+mockk = "1.14.5"
 turbine = "1.2.1"
 coroutinesTest = "1.10.2"
+mockWebServer = "5.1.0"
 
 # Linting
 detekt = "1.23.8"
@@ -125,6 +126,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+okhttp-mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockWebServer" }
 
 [plugins]
 # Android

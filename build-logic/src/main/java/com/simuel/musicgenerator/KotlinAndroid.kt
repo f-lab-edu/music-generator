@@ -57,6 +57,7 @@ internal fun Project.configureKotlin() {
             freeCompilerArgs.set(
                 freeCompilerArgs.get() + listOf(
                     "-opt-in=kotlin.RequiresOptIn",
+                    "-opt-in=kotlinx.serialization.InternalSerializationApi",
                 )
             )
         }
