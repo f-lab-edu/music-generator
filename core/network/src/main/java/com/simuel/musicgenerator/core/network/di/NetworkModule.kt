@@ -32,7 +32,6 @@ object NetworkModule {
     }
     
     @Provides
-    @Singleton
     internal fun provideOkHttpClient(json: Json): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
