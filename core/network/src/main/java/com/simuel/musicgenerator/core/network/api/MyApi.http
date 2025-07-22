@@ -1,0 +1,16 @@
+### 사용 한도, 현재 소비량, 남은 할당량을 반환하며, 지정된 날짜 범위에 따라 선택적으로 필터링합니다.
+GET https://soundtracks.loudly.com/api/account/limits
+Accept: application/json
+API-KEY: {{api-key}}
+Content-Type: application/json
+
+
+### 텍스트 프롬프트로 AI 음악 생성
+POST https://soundtracks.loudly.com/api/ai/prompt/songs
+Accept: application/json
+API-KEY: {{api-key}}
+
+### 랜덤 프롬프트 제공
+GET https://soundtracks.loudly.com/api/ai/prompt/random
+Accept: application/json
+API-KEY: {{api-key}}
