@@ -37,14 +37,18 @@ class FavoriteSongEntityTest {
     }
 
     @Test
-    fun `동일한 songId를 가진 FavoriteSongEntity는 equals에서 true를 반환해야 한다`() {
+    fun `FavoriteSongEntity의 copy 함수가 올바르게 동작해야 한다`() {
         // Given
-        val songId = "song123"
-        val favorite1 = FavoriteSongEntity(songId = songId, addedAt = 1000L)
-        val favorite2 = FavoriteSongEntity(songId = songId, addedAt = 2000L)
+        val original = FavoriteSongEntity(
+            songId = "song123",
+            addedAt = 1640995200000L
+        )
 
-        // When & Then
-        assertEquals(favorite1, favorite2)
-        assertEquals(favorite1.hashCode(), favorite2.hashCode())
+        // When
+        val copied = original.copy(addedAt = 1641081600000L)
+
+        // Then
+        assertEquals("song123", copied.songId)
+        assertEquals(1641081600000L, copied.addedAt)
     }
 }

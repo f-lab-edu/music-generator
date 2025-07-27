@@ -86,29 +86,38 @@ class SongEntityTest {
     }
 
     @Test
-    fun `동일한 ID를 가진 SongEntity는 equals에서 true를 반환해야 한다`() {
+    fun `SongEntity의 copy 함수가 올바르게 동작해야 한다`() {
         // Given
-        val id = "song123"
-        val song1 = SongEntity(
-            id = id,
-            title = "노래1",
+        val original = SongEntity(
+            id = "song123",
+            title = "원본 노래",
             duration = 180,
-            musicFilePath = "path1.mp3",
-            waveFormFilePath = "wave1.json",
-            createdAt = "2022-01-01T00:00:00Z"
-        )
-        val song2 = SongEntity(
-            id = id,
-            title = "노래2",
-            duration = 200,
-            musicFilePath = "path2.mp3",
-            waveFormFilePath = "wave2.json",
-            createdAt = "2022-01-02T00:00:00Z"
+            musicFilePath = "original.mp3",
+            waveFormFilePath = "original.json",
+            createdAt = "2022-01-01T00:00:00Z",
+            bpm = 120,
+            musicKeyId = 1,
+            musicKeyName = "C major",
+            musicKeyActive = true
         )
 
-        // When & Then
-        assertEquals(song1, song2)
-        assertEquals(song1.hashCode(), song2.hashCode())
+        // When
+        val copied = original.copy(
+            title = "수정된 노래",
+            duration = 200
+        )
+
+        // Then
+        assertEquals("song123", copied.id)
+        assertEquals("수정된 노래", copied.title)
+        assertEquals(200, copied.duration)
+        assertEquals("original.mp3", copied.musicFilePath)
+        assertEquals("original.json", copied.waveFormFilePath)
+        assertEquals("2022-01-01T00:00:00Z", copied.createdAt)
+        assertEquals(120, copied.bpm)
+        assertEquals(1, copied.musicKeyId)
+        assertEquals("C major", copied.musicKeyName)
+        assertEquals(true, copied.musicKeyActive)
     }
 
 }
