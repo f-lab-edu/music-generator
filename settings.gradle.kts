@@ -24,3 +24,4 @@ rootProject.name = "MusicGenerator"
 include(":app")
 include(":core:network")
 include(":core:data")
+include(":core:database")
