@@ -86,7 +86,8 @@ internal fun Project.configureJacocoAndroid(
                         "**/*Dao_Impl\$*.*",
                         "**/db/*Database.*",
                         "**/db/*Database\$*.*",
-                        "**/db/**"
+                        "**/db/**",
+                        "**/model/**"
                     )
                 }
             )
