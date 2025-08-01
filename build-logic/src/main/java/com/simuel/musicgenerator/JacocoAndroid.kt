@@ -60,7 +60,7 @@ internal fun Project.configureJacocoAndroid(
             }
 
             classDirectories.setFrom(
-                fileTree("$buildDir/tmp/kotlin-classes/${variant.name}") {
+                fileTree("${layout.buildDirectory.get().asFile}/tmp/kotlin-classes/${variant.name}") {
                     exclude(
                         "**/R.class",
                         "**/R$*.class",
@@ -97,7 +97,7 @@ internal fun Project.configureJacocoAndroid(
             )
 
             executionData.setFrom(
-                fileTree(buildDir) {
+                fileTree(layout.buildDirectory) {
                     include("**/*.exec", "**/*.ec")
                 }
             )
