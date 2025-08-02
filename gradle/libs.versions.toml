@@ -53,6 +53,9 @@ mockWebServer = "5.1.0"
 detekt = "1.23.8"
 material = "1.12.0"
 
+# Code Coverage
+jacoco = "0.8.13"
+
 [libraries]
 # gradle plugin
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

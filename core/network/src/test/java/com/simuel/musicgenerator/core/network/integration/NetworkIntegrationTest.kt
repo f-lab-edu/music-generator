@@ -1,6 +1,7 @@
 package com.simuel.musicgenerator.core.network.integration
 
 import com.simuel.musicgenerator.core.network.exception.ApiException
+import com.simuel.musicgenerator.core.network.interceptor.ApiKeyInterceptor
 import com.simuel.musicgenerator.core.network.interceptor.ErrorHandlingInterceptor
 import com.simuel.musicgenerator.core.network.model.AccountLimitResponse
 import com.simuel.musicgenerator.core.network.model.RandomPromptResponse
@@ -12,7 +13,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -189,4 +192,32 @@ class NetworkIntegrationTest {
         assertEquals(200, response.code)
         assertEquals("Create an upbeat electronic dance track with tropical house vibes", randomPrompt.prompt)
     }
+    
+    @Test
+    fun `ApiKeyInterceptor가 API-KEY 헤더를 추가해야 한다`() {
+        // Given
+        mockWebServer.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody("{}")
+        )
+        
+        val clientWithApiKey = OkHttpClient.Builder()
+            .addInterceptor(ApiKeyInterceptor())
+            .build()
+        
+        val request = Request.Builder()
+            .url(mockWebServer.url("/test"))
+            .build()
+        
+        // When
+        clientWithApiKey.newCall(request).execute()
+        
+        // Then
+        val recordedRequest = mockWebServer.takeRequest()
+        assertNotNull(recordedRequest.getHeader("API-KEY"))
+        // BuildConfig.LOUDLY_API_KEY가 테스트 환경에서는 빈 문자열일 수 있음
+        // 헤더가 추가되었는지만 확인
+    }
+    
 }
