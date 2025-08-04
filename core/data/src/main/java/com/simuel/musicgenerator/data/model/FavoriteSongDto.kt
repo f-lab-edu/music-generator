@@ -1,5 +1,5 @@
 package com.simuel.musicgenerator.data.model
 
-data class FavoriteSong(
+data class FavoriteSongDto(
     val songId: String
 )

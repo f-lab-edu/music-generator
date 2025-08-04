@@ -4,8 +4,8 @@ import com.simuel.musicgenerator.core.database.dao.FavoriteSongDao
 import com.simuel.musicgenerator.core.database.dao.SongDao
 import com.simuel.musicgenerator.core.database.entity.FavoriteSongEntity
 import com.simuel.musicgenerator.core.database.entity.SongEntity
-import com.simuel.musicgenerator.data.model.FavoriteSong
-import com.simuel.musicgenerator.data.model.Song
+import com.simuel.musicgenerator.data.model.FavoriteSongDto
+import com.simuel.musicgenerator.data.model.SongDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -34,13 +34,17 @@ class LoudlyLocalDataSourceImplTest {
     @Test
     fun `노래를 저장하면 DAO를 통해 삽입되어야 한다`() = runTest {
         // Given
-        val song = Song(
+        val song = SongDto(
             id = "song123",
             title = "테스트 노래",
             duration = 180,
             musicFilePath = "test.mp3",
             waveFormFilePath = "test.json",
-            createdAt = "2022-01-01T00:00:00Z"
+            createdAt = "2022-01-01T00:00:00Z",
+            bpm = null,
+            musicKeyId = null,
+            musicKeyName = null,
+            musicKeyActive = null
         )
         coEvery { songDao.insertSong(any()) } returns Unit
 
@@ -62,7 +66,11 @@ class LoudlyLocalDataSourceImplTest {
                 duration = 180,
                 musicFilePath = "song1.mp3",
                 waveFormFilePath = "wave1.json",
-                createdAt = "2022-01-01T00:00:00Z"
+                createdAt = "2022-01-01T00:00:00Z",
+                bpm = null,
+                musicKeyId = null,
+                musicKeyName = null,
+                musicKeyActive = null
             ),
             SongEntity(
                 id = "song2",
@@ -70,25 +78,37 @@ class LoudlyLocalDataSourceImplTest {
                 duration = 180,
                 musicFilePath = "song2.mp3",
                 waveFormFilePath = "wave2.json",
-                createdAt = "2022-01-01T00:00:00Z"
+                createdAt = "2022-01-01T00:00:00Z",
+                bpm = null,
+                musicKeyId = null,
+                musicKeyName = null,
+                musicKeyActive = null
             )
         )
         val expectedSongs = listOf(
-            Song(
+            SongDto(
                 id = "song1",
                 title = "노래1",
                 duration = 180,
                 musicFilePath = "song1.mp3",
                 waveFormFilePath = "wave1.json",
-                createdAt = "2022-01-01T00:00:00Z"
+                createdAt = "2022-01-01T00:00:00Z",
+                bpm = null,
+                musicKeyId = null,
+                musicKeyName = null,
+                musicKeyActive = null
             ),
-            Song(
+            SongDto(
                 id = "song2",
                 title = "노래2",
                 duration = 180,
                 musicFilePath = "song2.mp3",
                 waveFormFilePath = "wave2.json",
-                createdAt = "2022-01-01T00:00:00Z"
+                createdAt = "2022-01-01T00:00:00Z",
+                bpm = null,
+                musicKeyId = null,
+                musicKeyName = null,
+                musicKeyActive = null
             )
         )
         coEvery { songDao.getAllSongs() } returns flowOf(songEntities)
@@ -144,33 +164,6 @@ class LoudlyLocalDataSourceImplTest {
         coVerify { favoriteSongDao.removeFavorite(songId) }
     }
 
-    @Test
-    fun `즐겨찾기 여부를 확인하면 DAO의 결과를 반환해야 한다`() = runTest {
-        // Given
-        val songId = "song123"
-        coEvery { favoriteSongDao.isFavorite(songId) } returns true
-
-        // When
-        val result = localDataSource.isFavorite(songId)
-
-        // Then
-        assertTrue(result)
-        coVerify { favoriteSongDao.isFavorite(songId) }
-    }
-
-    @Test
-    fun `즐겨찾기가 아닌 노래를 확인하면 false를 반환해야 한다`() = runTest {
-        // Given
-        val songId = "song123"
-        coEvery { favoriteSongDao.isFavorite(songId) } returns false
-
-        // When
-        val result = localDataSource.isFavorite(songId)
-
-        // Then
-        assertFalse(result)
-        coVerify { favoriteSongDao.isFavorite(songId) }
-    }
 
     @Test
     fun `모든 즐겨찾기를 조회하면 DAO의 Flow를 반환해야 한다`() = runTest {
@@ -180,8 +173,8 @@ class LoudlyLocalDataSourceImplTest {
             FavoriteSongEntity(songId = "song2")
         )
         val expectedFavorites = listOf(
-            FavoriteSong(songId = "song1"),
-            FavoriteSong(songId = "song2")
+            FavoriteSongDto(songId = "song1"),
+            FavoriteSongDto(songId = "song2")
         )
         coEvery { favoriteSongDao.getAllFavorites() } returns flowOf(favoriteEntities)
 

@@ -7,9 +7,6 @@ import com.simuel.musicgenerator.data.model.AccountLimitInfoDto
 import com.simuel.musicgenerator.data.model.SongGenerationDto
 import com.simuel.musicgenerator.data.model.RandomPromptDataDto
 import com.simuel.musicgenerator.data.model.SongDto
-import com.simuel.musicgenerator.data.model.MusicKeyDto
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 internal class LoudlyRemoteDataSourceImpl @Inject constructor(
@@ -43,18 +40,14 @@ internal class LoudlyRemoteDataSourceImpl @Inject constructor(
         return SongDto(
             id = response.id,
             title = response.title,
-            durationInMillis = response.duration,
-            musicFileUrl = response.musicFilePath,
-            waveFormFileUrl = response.waveFormFilePath,
-            createdAt = LocalDateTime.parse(response.createdAt, DateTimeFormatter.ISO_DATE_TIME),
+            duration = response.duration,
+            musicFilePath = response.musicFilePath,
+            waveFormFilePath = response.waveFormFilePath,
+            createdAt = response.createdAt,
             bpm = response.bpm,
-            key = response.key?.let { keyResponse ->
-                MusicKeyDto(
-                    id = keyResponse.id,
-                    name = keyResponse.name,
-                    isActive = keyResponse.active
-                )
-            }
+            musicKeyId = response.key?.id,
+            musicKeyName = response.key?.name,
+            musicKeyActive = response.key?.active
         )
     }
 

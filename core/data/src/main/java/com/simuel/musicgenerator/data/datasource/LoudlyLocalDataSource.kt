@@ -1,14 +1,16 @@
 package com.simuel.musicgenerator.data.datasource
 
-import com.simuel.musicgenerator.data.model.FavoriteSong
-import com.simuel.musicgenerator.data.model.Song
+import com.simuel.musicgenerator.data.model.FavoriteSongDto
+import com.simuel.musicgenerator.data.model.SongDto
 import kotlinx.coroutines.flow.Flow
 
 interface LoudlyLocalDataSource {
     
-    suspend fun saveSong(song: Song)
+    suspend fun saveSong(song: SongDto)
     
-    fun getAllSongs(): Flow<List<Song>>
+    fun getAllSongs(): Flow<List<SongDto>>
+    
+    suspend fun getSongById(id: String): SongDto?
     
     suspend fun deleteSong(id: String)
     
@@ -16,7 +18,7 @@ interface LoudlyLocalDataSource {
     
     suspend fun removeFromFavorites(songId: String)
     
-    suspend fun isFavorite(songId: String): Boolean
+    fun getAllFavorites(): Flow<List<FavoriteSongDto>>
     
-    fun getAllFavorites(): Flow<List<FavoriteSong>>
+    fun getFavoriteSongsWithDetails(): Flow<List<SongDto>>
 }
