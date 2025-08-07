@@ -75,11 +75,10 @@ class LoudlyRemoteDataSourceImplTest {
         assertNotNull(result)
         assertEquals("test-song-id", result.id)
         assertEquals("Generated Song: Test prompt", result.title)
-        assertEquals(60000, result.durationInMillis)
-        assertEquals("https://api.example.com/songs/test-song.mp3", result.musicFileUrl)
+        assertEquals(60000, result.duration)
+        assertEquals("https://api.example.com/songs/test-song.mp3", result.musicFilePath)
         assertEquals(120, result.bpm)
-        assertNotNull(result.key)
-        assertEquals("C major", result.key?.name)
+        assertEquals("C major", result.musicKeyName)
     }
     
     @Test

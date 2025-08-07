@@ -1,11 +1,11 @@
-package com.simuel.musicgenerator.data.model
+package com.simuel.musicgenerator.domain.model
 
 data class Song(
     val id: String,
     val title: String,
     val duration: Int,
     val musicFilePath: String,
-    val waveFormFilePath: String,
+    val waveFormFilePath: String? = null,
     val createdAt: String,
     val bpm: Int? = null,
     val musicKeyId: Int? = null,

@@ -5,8 +5,8 @@ import com.simuel.musicgenerator.core.database.dao.SongDao
 import com.simuel.musicgenerator.core.database.entity.FavoriteSongEntity
 import com.simuel.musicgenerator.core.database.entity.SongEntity
 import com.simuel.musicgenerator.data.datasource.LoudlyLocalDataSource
-import com.simuel.musicgenerator.data.model.FavoriteSong
-import com.simuel.musicgenerator.data.model.Song
+import com.simuel.musicgenerator.data.model.FavoriteSongDto
+import com.simuel.musicgenerator.data.model.SongDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,40 +16,18 @@ internal class LoudlyLocalDataSourceImpl @Inject constructor(
     private val favoriteSongDao: FavoriteSongDao
 ) : LoudlyLocalDataSource {
 
-    override suspend fun saveSong(song: Song) {
-        songDao.insertSong(
-            SongEntity(
-                id = song.id,
-                title = song.title,
-                duration = song.duration,
-                musicFilePath = song.musicFilePath,
-                waveFormFilePath = song.waveFormFilePath,
-                createdAt = song.createdAt,
-                bpm = song.bpm,
-                musicKeyId = song.musicKeyId,
-                musicKeyName = song.musicKeyName,
-                musicKeyActive = song.musicKeyActive
-            )
-        )
+    override suspend fun saveSong(song: SongDto) {
+        songDao.insertSong(song.toEntity())
     }
 
-    override fun getAllSongs(): Flow<List<Song>> {
+    override fun getAllSongs(): Flow<List<SongDto>> {
         return songDao.getAllSongs().map { entities -> 
-            entities.map { entity ->
-                Song(
-                    id = entity.id,
-                    title = entity.title,
-                    duration = entity.duration,
-                    musicFilePath = entity.musicFilePath,
-                    waveFormFilePath = entity.waveFormFilePath,
-                    createdAt = entity.createdAt,
-                    bpm = entity.bpm,
-                    musicKeyId = entity.musicKeyId,
-                    musicKeyName = entity.musicKeyName,
-                    musicKeyActive = entity.musicKeyActive
-                )
-            }
+            entities.map { entity -> entity.toDto() }
         }
+    }
+    
+    override suspend fun getSongById(id: String): SongDto? {
+        return songDao.getSongById(id)?.toDto()
     }
     
     override suspend fun deleteSong(id: String) {
@@ -65,15 +43,51 @@ internal class LoudlyLocalDataSourceImpl @Inject constructor(
         favoriteSongDao.removeFavorite(songId)
     }
     
-    override suspend fun isFavorite(songId: String): Boolean {
-        return favoriteSongDao.isFavorite(songId)
+    override fun getAllFavorites(): Flow<List<FavoriteSongDto>> {
+        return favoriteSongDao.getAllFavorites().map { entities ->
+            entities.map { entity -> entity.toDto() }
+        }
     }
     
-    override fun getAllFavorites(): Flow<List<FavoriteSong>> {
-        return favoriteSongDao.getAllFavorites().map { entities ->
-            entities.map { entity ->
-                FavoriteSong(songId = entity.songId)
+    override fun getFavoriteSongsWithDetails(): Flow<List<SongDto>> {
+        return favoriteSongDao.getAllFavorites().map { favoriteEntities ->
+            favoriteEntities.mapNotNull { favoriteEntity ->
+                songDao.getSongById(favoriteEntity.songId)?.toDto()
             }
         }
+    }
+    
+    private fun SongEntity.toDto(): SongDto {
+        return SongDto(
+            id = id,
+            title = title,
+            duration = duration,
+            musicFilePath = musicFilePath,
+            waveFormFilePath = waveFormFilePath,
+            createdAt = createdAt,
+            bpm = bpm,
+            musicKeyId = musicKeyId,
+            musicKeyName = musicKeyName,
+            musicKeyActive = musicKeyActive
+        )
+    }
+    
+    private fun SongDto.toEntity(): SongEntity {
+        return SongEntity(
+            id = id,
+            title = title,
+            duration = duration,
+            musicFilePath = musicFilePath,
+            waveFormFilePath = waveFormFilePath,
+            createdAt = createdAt,
+            bpm = bpm,
+            musicKeyId = musicKeyId,
+            musicKeyName = musicKeyName,
+            musicKeyActive = musicKeyActive
+        )
+    }
+    
+    private fun FavoriteSongEntity.toDto(): FavoriteSongDto {
+        return FavoriteSongDto(songId = songId)
     }
 }

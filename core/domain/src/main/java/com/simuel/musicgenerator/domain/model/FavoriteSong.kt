@@ -1,4 +1,4 @@
-package com.simuel.musicgenerator.data.model
+package com.simuel.musicgenerator.domain.model
 
 data class FavoriteSong(
     val songId: String

@@ -23,44 +23,46 @@ internal fun Project.configureJacocoKotlin() {
         }
     }
 
-    tasks.register<JacocoReport>("jacocoTestReport") {
-        dependsOn("test")
+    if (!tasks.names.contains("jacocoTestReport")) {
+        tasks.register<JacocoReport>("jacocoTestReport") {
+            dependsOn("test")
 
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
+            }
+
+            classDirectories.setFrom(
+                fileTree("$buildDir/classes/kotlin/main") {
+                    exclude(
+                        "**/R.class",
+                        "**/R$*.class",
+                        "**/BuildConfig.*",
+                        "**/Manifest*.*",
+                        "**/*Test*.*",
+                        "**/*\$Lambda$*.*",
+                        "**/*\$inlined$*.*",
+                        "**/di/*Module*.*",
+                        "**/*Module*.*",
+                        "**/*Dagger*.*",
+                        "**/*Hilt*.*",
+                        "**/*MembersInjector*.*",
+                        "**/*_Provide*Factory*.*",
+                        "**/*_Factory*.*"
+                    )
+                }
+            )
+
+            sourceDirectories.setFrom(
+                "$projectDir/src/main/kotlin",
+                "$projectDir/src/main/java"
+            )
+
+            executionData.setFrom(
+                fileTree(buildDir) {
+                    include("**/*.exec", "**/*.ec")
+                }
+            )
         }
-
-        classDirectories.setFrom(
-            fileTree("$buildDir/classes/kotlin/main") {
-                exclude(
-                    "**/R.class",
-                    "**/R$*.class",
-                    "**/BuildConfig.*",
-                    "**/Manifest*.*",
-                    "**/*Test*.*",
-                    "**/*\$Lambda$*.*",
-                    "**/*\$inlined$*.*",
-                    "**/di/*Module*.*",
-                    "**/*Module*.*",
-                    "**/*Dagger*.*",
-                    "**/*Hilt*.*",
-                    "**/*MembersInjector*.*",
-                    "**/*_Provide*Factory*.*",
-                    "**/*_Factory*.*"
-                )
-            }
-        )
-
-        sourceDirectories.setFrom(
-            "$projectDir/src/main/kotlin",
-            "$projectDir/src/main/java"
-        )
-
-        executionData.setFrom(
-            fileTree(buildDir) {
-                include("**/*.exec", "**/*.ec")
-            }
-        )
     }
 }

@@ -14,8 +14,12 @@ android {
 dependencies {
     // Network
     implementation(libs.kotlinx.serialization.json)
+    
+    // Module dependencies
+    implementation(project(":core:domain"))
 
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.turbine)
 }
