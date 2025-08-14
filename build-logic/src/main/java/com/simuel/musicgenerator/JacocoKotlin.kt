@@ -33,7 +33,7 @@ internal fun Project.configureJacocoKotlin() {
             }
 
             classDirectories.setFrom(
-                fileTree("$buildDir/classes/kotlin/main") {
+                fileTree(layout.buildDirectory.dir("classes/kotlin/main")) {
                     exclude(
                         "**/R.class",
                         "**/R$*.class",
@@ -48,7 +48,9 @@ internal fun Project.configureJacocoKotlin() {
                         "**/*Hilt*.*",
                         "**/*MembersInjector*.*",
                         "**/*_Provide*Factory*.*",
-                        "**/*_Factory*.*"
+                        "**/*_Factory*.*",
+                        // Domain model 제외 (data class)
+                        "**/domain/model/**"
                     )
                 }
             )
@@ -59,7 +61,7 @@ internal fun Project.configureJacocoKotlin() {
             )
 
             executionData.setFrom(
-                fileTree(buildDir) {
+                fileTree(layout.buildDirectory) {
                     include("**/*.exec", "**/*.ec")
                 }
             )
